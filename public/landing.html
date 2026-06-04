@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Lingra — Выучи язык за 7 дней ⚡</title>
+  <meta name="description" content="Lingra — экспресс-обучение 11 языкам. $10/мес за язык. AI-наставник, интерактивные уроки, система жизней."/>
+  <meta property="og:title" content="Lingra — Выучи язык за 7 дней"/>
+  <meta property="og:description" content="Английский, немецкий, турецкий, арабский, японский и ещё 6 языков. $10/мес."/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Outfit',sans-serif;background:#080811;color:#fff;overflow-x:hidden}
+    .bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 15% 40%,rgba(99,102,241,.2) 0%,transparent 55%),radial-gradient(ellipse at 85% 15%,rgba(236,72,153,.15) 0%,transparent 50%),radial-gradient(ellipse at 50% 85%,rgba(16,185,129,.1) 0%,transparent 50%)}
+    .wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 20px}
+
+    /* NAV */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:24px 20px;max-width:480px;margin:0 auto;position:relative;z-index:1}
+    .logo{font-size:24px;font-weight:900;background:linear-gradient(135deg,#fff,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-btn{background:linear-gradient(135deg,#6366F1,#A855F7);border:none;color:#fff;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;display:inline-block}
+
+    /* HERO */
+    .hero{text-align:center;padding:40px 0 48px}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:8px 18px;margin-bottom:28px;font-size:13px;color:#A78BFA;font-weight:600;letter-spacing:.5px}
+    .hero h1{font-size:48px;font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:16px}
+    .hero h1 span{background:linear-gradient(135deg,#fff 0%,#A78BFA 50%,#EC4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{font-size:17px;color:#9CA3AF;margin-bottom:36px;line-height:1.6}
+    .hero-btns{display:flex;flex-direction:column;gap:12px}
+    .btn-primary{background:linear-gradient(135deg,#6366F1,#A855F7);border:none;color:#fff;border-radius:18px;padding:18px;font-size:17px;font-weight:800;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;display:block;text-align:center;transition:transform .2s}
+    .btn-primary:hover{transform:translateY(-2px)}
+    .btn-secondary{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:18px;padding:16px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;text-decoration:none;display:block;text-align:center}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:40px 0}
+    .stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px 12px;text-align:center}
+    .stat-val{font-size:28px;font-weight:900;margin-bottom:4px}
+    .stat-label{font-size:12px;color:#6B7280}
+
+    /* LANGUAGES */
+    .section{margin:48px 0}
+    .section-title{font-size:13px;font-weight:700;color:#6B7280;letter-spacing:2px;margin-bottom:20px}
+    .langs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .lang-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px}
+    .lang-card .flag{font-size:28px}
+    .lang-card .name{font-weight:700;font-size:15px}
+    .lang-card .price{font-size:12px;color:#A78BFA;margin-top:2px}
+
+    /* HOW IT WORKS */
+    .steps{display:flex;flex-direction:column;gap:16px}
+    .step{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;display:flex;align-items:flex-start;gap:16px}
+    .step-num{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#6366F1,#A855F7);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .step-title{font-weight:700;font-size:16px;margin-bottom:4px}
+    .step-desc{font-size:13px;color:#9CA3AF;line-height:1.5}
+
+    /* PRICING */
+    .pricing-cards{display:flex;flex-direction:column;gap:12px}
+    .pricing-promo{border-radius:16px;padding:14px 18px;font-size:14px;font-weight:600;margin-bottom:8px}
+    .p1{background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(5,150,105,.2));border:1px solid rgba(16,185,129,.4);color:#10B981}
+    .p2{background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(217,119,6,.2));border:1px solid rgba(245,158,11,.4);color:#F59E0B}
+    .price-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;display:flex;align-items:center;justify-content:space-between}
+    .price-name{font-weight:700;font-size:16px}
+    .price-desc{font-size:12px;color:#6B7280;margin-top:3px}
+    .price-val{font-size:22px;font-weight:900;color:#A78BFA}
+    .price-per{font-size:12px;color:#6B7280}
+
+    /* TESTIMONIALS */
+    .reviews{display:flex;flex-direction:column;gap:12px}
+    .review{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
+    .review-text{font-size:14px;line-height:1.6;color:#D1D5DB;margin-bottom:12px}
+    .review-author{display:flex;align-items:center;gap:10px}
+    .review-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .review-name{font-weight:700;font-size:14px}
+    .review-loc{font-size:12px;color:#6B7280}
+    .stars{color:#F59E0B;font-size:13px;margin-bottom:8px}
+
+    /* FAQ */
+    .faq{display:flex;flex-direction:column;gap:10px}
+    .faq-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;cursor:pointer}
+    .faq-q{font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+    .faq-a{font-size:13px;color:#9CA3AF;margin-top:10px;line-height:1.6;display:none}
+    .faq-item.open .faq-a{display:block}
+    .faq-item.open .arrow{transform:rotate(180deg)}
+    .arrow{transition:transform .2s;font-size:12px}
+
+    /* CTA */
+    .cta{background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(168,85,247,.2));border:1px solid rgba(99,102,241,.3);border-radius:28px;padding:40px 24px;text-align:center;margin:48px 0}
+    .cta h2{font-size:28px;font-weight:900;margin-bottom:12px}
+    .cta p{color:#9CA3AF;margin-bottom:28px;font-size:15px}
+
+    /* FOOTER */
+    footer{text-align:center;padding:32px 20px;color:#374151;font-size:13px;border-top:1px solid rgba(255,255,255,.06)}
+    footer a{color:#6B7280;text-decoration:none}
+  </style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">LINGRA</div>
+  <a href="/" class="nav-btn">Начать →</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">⚡ ЭКСПРЕСС-ОБУЧЕНИЕ</div>
+    <h1>Выучи язык<br/><span>за 7 дней</span></h1>
+    <p>11 языков · AI-наставник · Интерактивные уроки<br/>Учи в любом месте, в любое время</p>
+    <div class="hero-btns">
+      <a href="/" class="btn-primary">🚀 Начать бесплатно</a>
+      <a href="#how" class="btn-secondary">Как это работает?</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" style="color:#A78BFA">11</div>
+      <div class="stat-label">языков</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:#10B981">7</div>
+      <div class="stat-label">дней до результата</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:#F59E0B">$10</div>
+      <div class="stat-label">в месяц / язык</div>
+    </div>
+  </div>
+
+  <!-- LANGUAGES -->
+  <div class="section">
+    <div class="section-title">ДОСТУПНЫЕ ЯЗЫКИ</div>
+    <div class="langs-grid">
+      <div class="lang-card"><div class="flag">🇬🇧</div><div><div class="name">English</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇩🇪</div><div><div class="name">Deutsch</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇹🇷</div><div><div class="name">Türkçe</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇸🇦</div><div><div class="name">العربية</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇯🇵</div><div><div class="name">日本語</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇰🇷</div><div><div class="name">한국어</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇨🇳</div><div><div class="name">中文</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇪🇸</div><div><div class="name">Español</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇷🇺</div><div><div class="name">Русский</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card"><div class="flag">🇺🇿</div><div><div class="name">O'zbek</div><div class="price">$10/мес</div></div></div>
+      <div class="lang-card" style="grid-column:span 2;justify-content:center"><div class="flag">🇮🇷</div><div><div class="name">فارسی</div><div class="price">$10/мес</div></div></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" id="how">
+    <div class="section-title">КАК ЭТО РАБОТАЕТ</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">🎯</div>
+        <div><div class="step-title">Выбери язык и уровень</div><div class="step-desc">Начинающий, средний или продвинутый — выбери свой уровень и начни сразу</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">📚</div>
+        <div><div class="step-title">Проходи интерактивные уроки</div><div class="step-desc">4 типа упражнений: выбор ответа, составление фраз, заполнение пропусков, перевод</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">🔊</div>
+        <div><div class="step-title">Слушай произношение</div><div class="step-desc">Каждое слово и фраза озвучивается носителем языка — учи правильный акцент</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">🤖</div>
+        <div><div class="step-title">Практикуй с AI-наставником</div><div class="step-desc">Живые диалоги с AI на твоём уровне — как разговор с носителем языка</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="section" id="pricing">
+    <div class="section-title">ЦЕНЫ</div>
+    <div class="pricing-promo p1">🎁 Выбери 3 языка — 4-й БЕСПЛАТНО (-$10)</div>
+    <div class="pricing-promo p2">🔥 Выбери 5 языков — 6-й БЕСПЛАТНО + скидка $5/мес</div>
+    <div class="pricing-cards">
+      <div class="price-row">
+        <div><div class="price-name">1 язык</div><div class="price-desc">Безлимитные уроки + AI</div></div>
+        <div style="text-align:right"><div class="price-val">$10</div><div class="price-per">/месяц</div></div>
+      </div>
+      <div class="price-row" style="border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.1)">
+        <div><div class="price-name">3 языка 🎁</div><div class="price-desc">Платишь за 2, 3-й в подарок</div></div>
+        <div style="text-align:right"><div class="price-val">$20</div><div class="price-per">/месяц</div></div>
+      </div>
+      <div class="price-row" style="border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.1)">
+        <div><div class="price-name">5 языков 🔥</div><div class="price-desc">6-й бесплатно + 10% скидка</div></div>
+        <div style="text-align:right"><div class="price-val">$36</div><div class="price-per">/месяц</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="section">
+    <div class="section-title">ОТЗЫВЫ</div>
+    <div class="reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <div class="review-text">"Выучила базовый английский за 2 недели! Уроки короткие, не надоедают. AI-наставник помогает практиковаться в любое время."</div>
+        <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366F1,#A855F7)">М</div><div><div class="review-name">Малика Юсупова</div><div class="review-loc">Ташкент 🇺🇿</div></div></div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <div class="review-text">"Учу турецкий для поездки. За месяц уже могу объясниться в магазине и кафе. Очень удобно учить с телефона."</div>
+        <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">А</div><div><div class="review-name">Азиз Каримов</div><div class="review-loc">Самарканд 🇺🇿</div></div></div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★☆</div>
+        <div class="review-text">"Цена очень разумная за качество. Беру сразу 3 языка — английский, немецкий и испанский. 4-й получился бесплатно!"</div>
+        <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">Н</div><div><div class="review-name">Нигора Рашидова</div><div class="review-loc">Москва 🇷🇺</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="section-title">ЧАСТО СПРАШИВАЮТ</div>
+    <div class="faq">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Можно ли отменить подписку? <span class="arrow">▼</span></div>
+        <div class="faq-a">Да, в любой момент. Подписка работает до конца оплаченного периода, деньги не списываются автоматически без вашего согласия.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Есть ли приложение для телефона? <span class="arrow">▼</span></div>
+        <div class="faq-a">Сайт полностью адаптирован для телефона. Приложение для Android и iOS в разработке — выйдет в ближайшее время.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Что значит "4-й язык бесплатно"? <span class="arrow">▼</span></div>
+        <div class="faq-a">При выборе 3 языков — вы платите только за 2 ($20), третий в подарок. При выборе 5 языков — платите за 4 со скидкой 10%, шестой бесплатно.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Подходит ли для полных новичков? <span class="arrow">▼</span></div>
+        <div class="faq-a">Да! Уровень "Начинающий" начинается с самых основ — алфавита, базовых слов и приветствий. Никаких предварительных знаний не нужно.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Как работает AI-наставник? <span class="arrow">▼</span></div>
+        <div class="faq-a">AI-наставник общается с вами на изучаемом языке, исправляет ошибки и объясняет правила. Работает 24/7, отвечает на вашем родном языке.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>Начни учить<br/>язык сегодня 🚀</h2>
+    <p>Первый урок бесплатно.<br/>Без кредитной карты.</p>
+    <a href="/" class="btn-primary">Попробовать бесплатно →</a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:12px">🌍 <strong>LINGRA</strong> — Express Language Learning</p>
+  <p><a href="/">App</a> · <a href="#pricing">Pricing</a> · <a href="mailto:lingra.app@gmail.com">Contact</a></p>
+  <p style="margin-top:12px;margin-bottom:8px">
+    <a href="/terms.html">Terms of Service</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="/refund.html">Refund Policy</a>
+  </p>
+  <p style="margin-top:8px">© 2026 Lingra. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
