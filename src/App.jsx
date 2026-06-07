@@ -1046,6 +1046,9 @@ export default function Lingra() {
   const [progress, setProgress] = useState({});
   const [pricingSelected, setPricingSelected] = useState([]);
 
+  // ── PRICING STATE ─────────────────────────────────────────────────────────
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
   // ── AUTH STATE ────────────────────────────────────────────────────────────
   const [authToken, setAuthToken] = useState(() => localStorage.getItem("lingra_token") || null);
   const [authUser, setAuthUser] = useState(null);
@@ -1956,7 +1959,6 @@ export default function Lingra() {
 
   // ── PRICING ─────────────────────────────────────────────────────────────────
   if (screen === "pricing") {
-    const [selectedPlan, setSelectedPlan] = React.useState(null);
     const isUz = nativeLang === "uz";
 
     const STAGES = [
