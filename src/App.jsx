@@ -74,17 +74,36 @@ const NATIVE_LANGS = [
   { code: "uz", name: "O'zbek", flag: "🇺🇿", img: "uz" },
 ];
 
-// Flag image component - works on all platforms including Windows
-const FlagImg = ({ code, size = 32 }) => (
-  <img
-    src={`https://flagcdn.com/w${size * 2}/${code}.png`}
-    width={size}
-    height={size * 0.67}
-    alt={code}
-    style={{ borderRadius: 4, objectFit: "cover", display: "block" }}
-    onError={(e) => { e.target.style.display = "none"; }}
-  />
-);
+// Flag colors map
+const FLAG_COLORS = {
+  ru: ["#FFFFFF","#0039A6","#D52B1E"],
+  uz: ["#1EB53A","#FFFFFF","#CE1126"],
+  gb: ["#012169","#FFFFFF","#C8102E"],
+  en: ["#012169","#FFFFFF","#C8102E"],
+  de: ["#000000","#DD0000","#FFCE00"],
+  tr: ["#E30A17","#FFFFFF","#E30A17"],
+  sa: ["#006C35","#FFFFFF","#006C35"],
+  ir: ["#239F40","#FFFFFF","#DA0000"],
+  cn: ["#DE2910","#FFDE00","#DE2910"],
+  es: ["#AA151B","#F1BF00","#AA151B"],
+};
+const FLAG_EMOJI = {
+  ru:"🇷🇺", uz:"🇺🇿", gb:"🇬🇧", en:"🇬🇧",
+  de:"🇩🇪", tr:"🇹🇷", sa:"🇸🇦", ir:"🇮🇷",
+  cn:"🇨🇳", es:"🇪🇸",
+};
+const FlagImg = ({ code, size = 32 }) => {
+  const c = FLAG_COLORS[code] || ["#6366F1","#fff","#6366F1"];
+  const h = Math.round(size * 0.67);
+  const s3 = Math.round(h/3);
+  return (
+    <svg width={size} height={h} style={{ borderRadius:3, flexShrink:0 }} viewBox={`0 0 ${size} ${h}`}>
+      <rect x="0" y="0" width={size} height={s3} fill={c[0]}/>
+      <rect x="0" y={s3} width={size} height={s3} fill={c[1]}/>
+      <rect x="0" y={s3*2} width={size} height={s3} fill={c[2]}/>
+    </svg>
+  );
+};
 
 const LANGUAGES = [
   { code: "en", name: "English", flag: "🇬🇧", img: "gb", color: "#3B82F6" },
