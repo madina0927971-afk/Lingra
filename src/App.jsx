@@ -70,12 +70,24 @@ const XP_PER_EXERCISE = 10;
 const XP_PER_LESSON = 50;
 
 const NATIVE_LANGS = [
-  { code: "ru", name: "Русский", flag: "🇷🇺" },
-  { code: "uz", name: "O'zbek", flag: "🇺🇿" },
+  { code: "ru", name: "Русский", flag: "🇷🇺", img: "ru" },
+  { code: "uz", name: "O'zbek", flag: "🇺🇿", img: "uz" },
 ];
 
+// Flag image component - works on all platforms including Windows
+const FlagImg = ({ code, size = 32 }) => (
+  <img
+    src={`https://flagcdn.com/w${size * 2}/${code}.png`}
+    width={size}
+    height={size * 0.67}
+    alt={code}
+    style={{ borderRadius: 4, objectFit: "cover", display: "block" }}
+    onError={(e) => { e.target.style.display = "none"; }}
+  />
+);
+
 const LANGUAGES = [
-  { code: "en", name: "English", flag: "🇬🇧", color: "#3B82F6" },
+  { code: "en", name: "English", flag: "🇬🇧", img: "gb", color: "#3B82F6" },
 ];
 
 const LEVELS = ["beginner", "intermediate", "advanced"];
@@ -1364,8 +1376,10 @@ export default function Lingra() {
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
               {NATIVE_LANGS.map(nl => (
                 <div key={nl.code} onClick={() => setNativeLang(nl.code)} style={S.pill(nativeLang===nl.code)}>
-                  <div style={{ fontSize:22 }}>{nl.flag}</div>
-                  <div style={{ fontSize:10, marginTop:4, fontWeight:600, color: nativeLang===nl.code?"#fff":"#9CA3AF" }}>{nl.name}</div>
+                  <div style={{ display:"flex", justifyContent:"center", marginBottom:4 }}>
+                    <FlagImg code={nl.img || nl.code} size={28}/>
+                  </div>
+                  <div style={{ fontSize:10, fontWeight:600, color: nativeLang===nl.code?"#fff":"#9CA3AF" }}>{nl.name}</div>
                 </div>
               ))}
             </div>
@@ -1427,7 +1441,7 @@ export default function Lingra() {
                   onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.08)"}
                   onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.04)"}>
                   <div style={{ position:"absolute", top:0, left:0, width:done>0?"50%":"0%", height:3, background:`linear-gradient(90deg,${lang.color},${lang.color}66)`, transition:"width .5s" }}/>
-                  <div style={{ fontSize:28 }}>{lang.flag}</div>
+                  <FlagImg code={lang.img || lang.code} size={36}/>
                   <div style={{ fontSize:14, fontWeight:700, marginTop:8 }}>{lang.name}</div>
                   <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>3 уровня {done>0&&<span style={{color:lang.color}}>• {done}✓</span>}</div>
                 </div>
@@ -1452,7 +1466,7 @@ export default function Lingra() {
         <div style={S.wrap}>
           <div style={{ padding:"48px 24px 24px", display:"flex", alignItems:"center", gap:14 }}>
             <button onClick={()=>setScreen("home")} style={S.backBtn}>←</button>
-            <div style={{ fontSize:28 }}>{lang?.flag}</div>
+            <FlagImg code={lang?.img || lang?.code} size={32}/>
             <div><h2 style={{ margin:0, fontSize:22, fontWeight:800 }}>{lang?.name}</h2><div style={{ fontSize:13, color:"#6B7280" }}>{t.selectLevel}</div></div>
           </div>
           <div style={{ padding:"0 24px", flex:1 }}>
@@ -1494,7 +1508,7 @@ export default function Lingra() {
         <div style={S.wrap}>
           <div style={{ padding:"48px 24px 14px", display:"flex", alignItems:"center", gap:14 }}>
             <button onClick={()=>setScreen("levelSelect")} style={S.backBtn}>←</button>
-            <div style={{ fontSize:26 }}>{lang?.flag}</div>
+            <FlagImg code={lang?.img || lang?.code} size={32}/>
             <div style={{ flex:1 }}>
               <h2 style={{ margin:0, fontSize:20, fontWeight:800 }}>{lang?.name}</h2>
               <div style={{ fontSize:12, color, fontWeight:700 }}>{t[currentLevel]}</div>
@@ -1832,7 +1846,7 @@ export default function Lingra() {
         <div style={S.wrap}>
           <div style={{ padding:"48px 24px 14px", display:"flex", alignItems:"center", gap:12, borderBottom:"1px solid rgba(255,255,255,.06)" }}>
             <button onClick={()=>setScreen("course")} style={S.backBtn}>←</button>
-            <div style={{ fontSize:26 }}>🤖</div>
+            <div style={{ fontSize:26, lineHeight:1 }}>🤖</div>
             <div><div style={{ fontWeight:700, fontSize:16 }}>{t.aiTitle}</div><div style={{ fontSize:12, color:"#10B981" }}>{t.aiOnline} • {lang?.name}</div></div>
           </div>
           <div style={{ flex:1, overflowY:"auto", padding:"14px 24px", display:"flex", flexDirection:"column", gap:10 }}>
