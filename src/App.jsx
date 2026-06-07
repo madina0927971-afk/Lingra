@@ -159,7 +159,7 @@ const UI = {
   },
   uz: {
     selectNative:"Ona tilingizni tanlang", chooseToLearn:"O'RGANISH UCHUN TILLAR",
-    days:"kun", xp:"XP", langs:"til", pricingBtn:"💎 Narxlar",
+    days:"kun", xp:"XP", langs:"til", pricingBtn:"💎 Kurs narxlari",
     lessons:"DARSLAR", words:"so'z", questions:"topshiriq",
     aiTitle:"AI Murabbiy", aiOnline:"● online", aiPlaceholder:"Yozing...",
     pricing:"Narxlar", langPrice:"$10/oy har bir til",
@@ -1451,21 +1451,42 @@ export default function Lingra() {
         </div>
         <div style={{ padding:"0 24px", flex:1 }}>
           <div style={{ fontSize:12, fontWeight:700, color:"#6B7280", letterSpacing:2, marginBottom:12 }}>{t.chooseToLearn}</div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
-            {LANGUAGES.map(lang => {
-              const done = LEVELS.reduce((a,lv)=>a+(LESSON_DATA[`${lang.code}-${lv}`]||[]).filter(ls=>progress[`${lang.code}-${lv}-${ls.id}`]).length,0);
-              return (
-                <div key={lang.code} onClick={() => { setSelectedLang(lang.code); setScreen("levelSelect"); }}
-                  style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:18, padding:16, cursor:"pointer", transition:"all .2s", position:"relative", overflow:"hidden" }}
-                  onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,.08)"}
-                  onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,.04)"}>
-                  <div style={{ position:"absolute", top:0, left:0, width:done>0?"50%":"0%", height:3, background:`linear-gradient(90deg,${lang.color},${lang.color}66)`, transition:"width .5s" }}/>
-                  <FlagImg code={lang.img || lang.code} size={36}/>
-                  <div style={{ fontSize:14, fontWeight:700, marginTop:8 }}>{lang.name}</div>
-                  <div style={{ fontSize:11, color:"#6B7280", marginTop:2 }}>3 уровня {done>0&&<span style={{color:lang.color}}>• {done}✓</span>}</div>
+          {/* Single English course card */}
+          <div onClick={() => { setSelectedLang("en"); setScreen("levelSelect"); }}
+            style={{ background:"linear-gradient(135deg,rgba(59,130,246,.15),rgba(99,102,241,.15))", border:"2px solid rgba(59,130,246,.4)", borderRadius:22, padding:24, cursor:"pointer", transition:"all .2s", position:"relative", overflow:"hidden" }}
+            onMouseEnter={e=>e.currentTarget.style.transform="translateY(-3px)"}
+            onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}>
+            <div style={{ position:"absolute", top:16, right:16, background:"linear-gradient(135deg,#6366F1,#A855F7)", borderRadius:100, padding:"4px 14px", fontSize:12, fontWeight:700 }}>
+              {nativeLang==="uz" ? "MAVJUD" : "ДОСТУПНО"}
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
+              <FlagImg code="gb" size={52}/>
+              <div>
+                <div style={{ fontSize:26, fontWeight:900 }}>English</div>
+                <div style={{ fontSize:13, color:"#9CA3AF", marginTop:2 }}>A1 → C2 · 9 {nativeLang==="uz"?"oy":"месяцев"}</div>
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:16 }}>
+              {(nativeLang==="uz"
+                ? ["🌱 Boshlang'ich","🔥 O'rta","⚡ Yuqori"]
+                : ["🌱 Начинающий","🔥 Средний","⚡ Продвинутый"]
+              ).map(s => (
+                <span key={s} style={{ background:"rgba(59,130,246,.2)", border:"1px solid rgba(59,130,246,.3)", borderRadius:8, padding:"4px 12px", fontSize:12, fontWeight:600, color:"#93C5FD" }}>{s}</span>
+              ))}
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+              {[
+                ["📚", nativeLang==="uz"?"Darslar":"Уроки", "36+"],
+                ["🔊", nativeLang==="uz"?"Audio":"Аудио", "✓"],
+                ["🤖", "AI", nativeLang==="uz"?"Murabbiy":"Наставник"],
+              ].map(([ic,lb,val]) => (
+                <div key={lb} style={{ background:"rgba(255,255,255,.05)", borderRadius:12, padding:"10px 8px", textAlign:"center" }}>
+                  <div style={{ fontSize:18 }}>{ic}</div>
+                  <div style={{ fontSize:10, color:"#6B7280", marginTop:2 }}>{lb}</div>
+                  <div style={{ fontSize:12, fontWeight:700, marginTop:1 }}>{val}</div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
         <div style={{ padding:"16px 24px 32px" }}>
