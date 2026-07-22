@@ -1,7 +1,26 @@
+// ВАЖНО: замени значения checkoutUrl на реальные ссылки твоих продуктов в Lemon Squeezy.
+// Как получить: Lemon Squeezy Dashboard → Products → [твой продукт] → Copy checkout URL.
+// Формат обычно такой: https://ТВОЙ-МАГАЗИН.lemonsqueezy.com/buy/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
 const plans = [
-  { level: "A1–A2", price: "$10", period: "3 месяца" },
-  { level: "B1–B2", price: "$10", period: "3 месяца" },
-  { level: "C1–C2", price: "$10", period: "3 месяца" },
+  {
+    level: "A1–A2",
+    price: "$10",
+    period: "3 месяца",
+    checkoutUrl: "https://lingra.lemonsqueezy.com/buy/REPLACE_A1_A2_VARIANT_ID",
+  },
+  {
+    level: "B1–B2",
+    price: "$10",
+    period: "3 месяца",
+    checkoutUrl: "https://lingra.lemonsqueezy.com/buy/REPLACE_B1_B2_VARIANT_ID",
+  },
+  {
+    level: "C1–C2",
+    price: "$10",
+    period: "3 месяца",
+    checkoutUrl: "https://lingra.lemonsqueezy.com/buy/REPLACE_C1_C2_VARIANT_ID",
+  },
 ];
 
 const styles = {
@@ -37,6 +56,9 @@ const styles = {
     padding: "10px 20px",
     cursor: "pointer",
     width: "100%",
+    display: "inline-block",
+    textDecoration: "none",
+    boxSizing: "border-box",
   },
 };
 
@@ -50,7 +72,15 @@ export default function Pricing() {
             <div style={styles.level}>{p.level}</div>
             <div style={styles.price}>{p.price}/мес</div>
             <div style={styles.period}>{p.period}</div>
-            <button style={styles.button}>Оформить</button>
+            <a
+              href={p.checkoutUrl}
+              className="lemonsqueezy-button"
+              style={styles.button}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Оформить
+            </a>
           </div>
         ))}
       </div>

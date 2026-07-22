@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom";
+import { getLessons } from "../data/lessons";
 
-const lessons = [
-  { id: 1, title: "Приветствия и знакомство" },
-  { id: 2, title: "В магазине" },
-  { id: 3, title: "Путешествия" },
-  { id: 4, title: "Работа и офис" },
-];
+const lessons = getLessons("a1-a2");
 
 const styles = {
   page: {

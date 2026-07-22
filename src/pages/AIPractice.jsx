@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const styles = {
   page: {
@@ -19,8 +19,11 @@ const styles = {
     padding: "16px",
     marginBottom: "16px",
     minHeight: "300px",
+    maxHeight: "50vh",
+    overflowY: "auto",
   },
   msg: { marginBottom: "10px", lineHeight: 1.4 },
+  typing: { opacity: 0.5, fontStyle: "italic" },
   inputRow: { display: "flex", gap: "8px", maxWidth: "600px" },
   input: {
     flex: 1,
@@ -38,30 +41,67 @@ const styles = {
     padding: "0 20px",
     cursor: "pointer",
   },
+  error: { color: "#f87171", marginTop: "8px", maxWidth: "600px" },
 };
 
 export default function AIPractice() {
   const [messages, setMessages] = useState([
-    { role: "tutor", text: "Hi! I'm your AI tutor. Let's practice English — tell me about your day." },
+    { role: "assistant", text: "Hi! I'm your AI tutor. Let's practice English — tell me about your day." },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const chatRef = useRef(null);
 
-  const send = () => {
-    if (!input.trim()) return;
-    setMessages((m) => [...m, { role: "user", text: input }]);
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
+
+  const send = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = { role: "user", text: input };
+    const updated = [...messages, userMsg];
+    setMessages(updated);
     setInput("");
-    // Note: actual Claude API call happens server-side via backend integration
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: updated.map((m) => ({
+            role: m.role === "assistant" ? "assistant" : "user",
+            content: m.text,
+          })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Ошибка сервера");
+      setMessages((m) => [...m, { role: "assistant", text: data.text }]);
+    } catch (err) {
+      setError(
+        "Не удалось получить ответ от ИИ-репетитора. " +
+          "Проверь, что переменная ANTHROPIC_API_KEY настроена в Vercel."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div style={styles.page}>
       <h1 style={styles.h1}>ИИ-репетитор</h1>
-      <div style={styles.chat}>
+      <div style={styles.chat} ref={chatRef}>
         {messages.map((m, i) => (
           <div key={i} style={styles.msg}>
-            <strong>{m.role === "tutor" ? "Tutor" : "Вы"}:</strong> {m.text}
+            <strong>{m.role === "assistant" ? "Tutor" : "Вы"}:</strong> {m.text}
           </div>
         ))}
+        {loading && <div style={{ ...styles.msg, ...styles.typing }}>Tutor печатает...</div>}
       </div>
       <div style={styles.inputRow}>
         <input
@@ -70,9 +110,13 @@ export default function AIPractice() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
           placeholder="Напишите ответ на английском..."
+          disabled={loading}
         />
-        <button style={styles.send} onClick={send}>Отправить</button>
+        <button style={styles.send} onClick={send} disabled={loading}>
+          Отправить
+        </button>
       </div>
+      {error && <p style={styles.error}>{error}</p>}
     </div>
   );
 }

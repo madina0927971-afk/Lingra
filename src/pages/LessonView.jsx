@@ -1,5 +1,6 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { getLesson, getLessons } from "../data/lessons";
 
 const styles = {
   page: {
@@ -9,7 +10,7 @@ const styles = {
     padding: "32px 24px",
     fontFamily: "system-ui, sans-serif",
   },
-  h1: { fontSize: "1.6rem", marginBottom: "8px" },
+  h1: { fontSize: "1.6rem", marginBottom: "4px" },
   meta: { opacity: 0.6, marginBottom: "24px" },
   card: {
     background: "#14142a",
@@ -29,35 +30,147 @@ const styles = {
     marginBottom: "10px",
     textAlign: "left",
     cursor: "pointer",
+    fontSize: "1rem",
+  },
+  input: {
+    width: "100%",
+    padding: "12px",
+    borderRadius: "10px",
+    border: "none",
+    background: "#1f1f3d",
+    color: "#fff",
+    fontSize: "1rem",
+    marginBottom: "12px",
+  },
+  feedback: { marginTop: "8px", fontWeight: 600 },
+  correct: { color: "#4ade80" },
+  wrong: { color: "#f87171" },
+  nextBtn: {
+    marginTop: "16px",
+    background: "#6c5ce7",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "10px 20px",
+    cursor: "pointer",
   },
   back: { color: "#6c5ce7", textDecoration: "none", display: "inline-block", marginTop: "20px" },
+  progress: { opacity: 0.5, fontSize: "0.9rem", marginBottom: "12px" },
 };
 
 export default function LessonView() {
   const { level, id } = useParams();
+  const navigate = useNavigate();
+  const lesson = getLesson(level, id);
+  const allLessons = getLessons(level);
+
+  const [step, setStep] = useState(0);
+  const [textAnswer, setTextAnswer] = useState("");
+  const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
   const [selected, setSelected] = useState(null);
 
-  const options = ["Hello", "Goodbye", "Thank you", "Please"];
+  if (!lesson) {
+    return (
+      <div style={styles.page}>
+        <h1 style={styles.h1}>Урок не найден</h1>
+        <Link to="/lessons" style={styles.back}>← Назад к урокам</Link>
+      </div>
+    );
+  }
+
+  const exercise = lesson.exercises[step];
+  const isLast = step === lesson.exercises.length - 1;
+
+  const normalize = (s) => s.trim().toLowerCase().replace(/[.,!?]/g, "");
+
+  const checkChoose = (opt) => {
+    setSelected(opt);
+    setFeedback(normalize(opt) === normalize(exercise.answer) ? "correct" : "wrong");
+  };
+
+  const checkText = () => {
+    setFeedback(normalize(textAnswer) === normalize(exercise.answer) ? "correct" : "wrong");
+  };
+
+  const next = () => {
+    if (isLast) {
+      const idx = allLessons.findIndex((l) => l.id === lesson.id);
+      const nextLesson = allLessons[idx + 1];
+      if (nextLesson) {
+        navigate(`/lesson/${level}/${nextLesson.id}`);
+      } else {
+        navigate("/lessons");
+      }
+      return;
+    }
+    setStep((s) => s + 1);
+    setTextAnswer("");
+    setSelected(null);
+    setFeedback(null);
+  };
 
   return (
     <div style={styles.page}>
-      <h1 style={styles.h1}>Урок {id}</h1>
+      <h1 style={styles.h1}>Урок {lesson.id}: {lesson.title}</h1>
       <p style={styles.meta}>Уровень: {level}</p>
+      <p style={styles.progress}>Задание {step + 1} из {lesson.exercises.length}</p>
+
       <div style={styles.card}>
-        <p style={styles.question}>Выберите перевод слова «Здравствуйте»:</p>
-        {options.map((opt) => (
-          <button
-            key={opt}
-            style={{
-              ...styles.option,
-              background: selected === opt ? "#6c5ce7" : "#1f1f3d",
-            }}
-            onClick={() => setSelected(opt)}
-          >
-            {opt}
+        <p style={styles.question}>{exercise.question}</p>
+
+        {exercise.type === "choose" && (
+          <>
+            {exercise.options.map((opt) => {
+              let bg = "#1f1f3d";
+              if (selected === opt) {
+                bg = normalize(opt) === normalize(exercise.answer) ? "#1f6d3d" : "#6d1f2a";
+              }
+              return (
+                <button
+                  key={opt}
+                  style={{ ...styles.option, background: bg }}
+                  onClick={() => checkChoose(opt)}
+                  disabled={feedback !== null}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </>
+        )}
+
+        {(exercise.type === "fill" || exercise.type === "translate") && (
+          <>
+            <input
+              style={styles.input}
+              value={textAnswer}
+              onChange={(e) => setTextAnswer(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && feedback === null && checkText()}
+              placeholder="Введите ответ на английском..."
+              disabled={feedback !== null}
+            />
+            {feedback === null && (
+              <button style={styles.nextBtn} onClick={checkText}>Проверить</button>
+            )}
+          </>
+        )}
+
+        {feedback === "correct" && (
+          <p style={{ ...styles.feedback, ...styles.correct }}>✓ Верно!</p>
+        )}
+        {feedback === "wrong" && (
+          <p style={{ ...styles.feedback, ...styles.wrong }}>
+            ✗ Неверно. Правильный ответ: {exercise.answer}
+          </p>
+        )}
+
+        {feedback !== null && (
+          <button style={styles.nextBtn} onClick={next}>
+            {isLast ? "Завершить урок" : "Следующее задание →"}
           </button>
-        ))}
+        )}
       </div>
+
       <Link to="/lessons" style={styles.back}>← Назад к урокам</Link>
     </div>
   );
