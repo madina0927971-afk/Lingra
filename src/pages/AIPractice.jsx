@@ -84,8 +84,8 @@ export default function AIPractice() {
       setMessages((m) => [...m, { role: "assistant", text: data.text }]);
     } catch (err) {
       setError(
-        "Не удалось получить ответ от ИИ-репетитора. " +
-          "Проверь, что переменная ANTHROPIC_API_KEY настроена в Vercel."
+        err.message ||
+          "Не удалось получить ответ от ИИ-репетитора. Попробуйте ещё раз."
       );
     } finally {
       setLoading(false);

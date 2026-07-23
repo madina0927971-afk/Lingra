@@ -44,6 +44,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errText = await response.text();
+      console.error("Anthropic API error", response.status, errText);
       res.status(response.status).json({ error: errText });
       return;
     }
@@ -56,6 +57,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ text: text || "..." });
   } catch (err) {
+    console.error("Chat handler error", err);
     res.status(500).json({ error: err.message });
   }
 }
