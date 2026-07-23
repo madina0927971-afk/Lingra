@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getLessons } from "../data/lessons";
 
-const lessons = getLessons("a1-a2");
+const LEVEL_LABELS = {
+  "a1-a2": "A1–A2",
+  "b1-b2": "B1–B2",
+  "c1-c2": "C1–C2",
+};
 
 const styles = {
   page: {
@@ -23,12 +27,16 @@ const styles = {
 };
 
 export default function Lessons() {
+  const { level = "a1-a2" } = useParams();
+  const lessons = getLessons(level);
+  const label = LEVEL_LABELS[level] || level;
+
   return (
     <div style={styles.page}>
-      <h1 style={styles.h1}>Уроки — A1–A2</h1>
+      <h1 style={styles.h1}>Уроки — {label}</h1>
       <div style={styles.list}>
         {lessons.map((l) => (
-          <Link key={l.id} to={`/lesson/a1-a2/${l.id}`} style={styles.item}>
+          <Link key={l.id} to={`/lesson/${level}/${l.id}`} style={styles.item}>
             {l.id}. {l.title}
           </Link>
         ))}
