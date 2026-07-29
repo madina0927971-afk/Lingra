@@ -31,6 +31,7 @@ export default function Navbar() {
     { to: "/dashboard", label: t.navDashboard },
     { to: "/lessons", label: t.navLessons },
     { to: "/ai-practice", label: t.navAI },
+    { to: "/vocabulary", label: t.navVocabulary },
     { to: "/pricing", label: t.navPricing },
   ];
 

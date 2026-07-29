@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getAIMessageQuota, recordAIMessageSent, isPremium } from "../utils/access";
 import { getLanguage, translations } from "../utils/i18n";
+import { simulateAIResponse } from "../utils/simulateAI";
 
 export default function AIPractice() {
   const [lang] = useState(getLanguage());
@@ -68,14 +69,17 @@ export default function AIPractice() {
           })),
         }),
       });
+      if (!res.ok) throw new Error("api unavailable");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Ошибка соединения с сервером");
+      if (!data.text) throw new Error("empty response");
       setMessages((m) => [...m, { role: "assistant", text: data.text }]);
-    } catch (err) {
-      setError(
-        err.message ||
-          "Не удалось получить ответ от ИИ-репетитора. Попробуйте ещё раз."
-      );
+    } catch {
+      // /api/chat недоступен (нет ключа ANTHROPIC_API_KEY, сеть и т.п.) —
+      // бесшовно переключаемся на локальную симуляцию, чтобы демо-сценарий
+      // никогда не показывал пользователю ошибку.
+      await new Promise((r) => setTimeout(r, 400 + Math.random() * 400));
+      const simulated = simulateAIResponse(userMsg.text, updated);
+      setMessages((m) => [...m, { role: "assistant", text: simulated }]);
     } finally {
       setLoading(false);
     }

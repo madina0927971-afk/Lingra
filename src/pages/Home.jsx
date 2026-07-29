@@ -128,7 +128,7 @@ export default function Home() {
             <span style={styles.stageTag}>A1–A2</span>
             <h3 style={styles.stageTitle}>{t.stage1Name}</h3>
             <p style={styles.stageDesc}>{t.stage1Desc}</p>
-            <Link to="/lessons?level=a1-a2" style={styles.stageLink}>
+            <Link to="/lessons/a1-a2" style={styles.stageLink}>
               Уроки A1-A2 →
             </Link>
           </div>
@@ -136,7 +136,7 @@ export default function Home() {
             <span style={styles.stageTag}>B1–B2</span>
             <h3 style={styles.stageTitle}>{t.stage2Name}</h3>
             <p style={styles.stageDesc}>{t.stage2Desc}</p>
-            <Link to="/lessons?level=b1-b2" style={styles.stageLink}>
+            <Link to="/lessons/b1-b2" style={styles.stageLink}>
               Уроки B1-B2 →
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default function Home() {
             <span style={styles.stageTag}>C1–C2</span>
             <h3 style={styles.stageTitle}>{t.stage3Name}</h3>
             <p style={styles.stageDesc}>{t.stage3Desc}</p>
-            <Link to="/lessons?level=c1-c2" style={styles.stageLink}>
+            <Link to="/lessons/c1-c2" style={styles.stageLink}>
               Уроки C1-C2 →
             </Link>
           </div>

@@ -1,9 +1,10 @@
-import { Link, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
 import { isLessonUnlocked } from "../utils/access";
+import { getLessonResult } from "../utils/progress";
 import { getLanguage, translations } from "../utils/i18n";
+import { useState } from "react";
 
 const STAGES = [
   { code: "a1-a2", label: "A1–A2 (Основы)" },
@@ -12,8 +13,8 @@ const STAGES = [
 ];
 
 export default function Lessons() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const level = searchParams.get("level") || "a1-a2";
+  const { level = "a1-a2" } = useParams();
+  const navigate = useNavigate();
   const [lang] = useState(getLanguage());
   const t = translations[lang] || translations.ru;
 
@@ -31,7 +32,7 @@ export default function Lessons() {
           {STAGES.map((s) => (
             <button
               key={s.code}
-              onClick={() => setSearchParams({ level: s.code })}
+              onClick={() => navigate(`/lessons/${s.code}`)}
               style={{
                 ...styles.tabBtn,
                 background: level === s.code ? "#6c5ce7" : "rgba(255, 255, 255, 0.05)",
@@ -48,6 +49,8 @@ export default function Lessons() {
         <div style={styles.list}>
           {lessons.map((l) => {
             const unlocked = isLessonUnlocked(l.id);
+            const result = getLessonResult(level, l.id);
+            const stars = result ? "⭐".repeat(result.stars) + "☆".repeat(3 - result.stars) : "";
             return (
               <Link
                 key={l.id}
@@ -57,6 +60,7 @@ export default function Lessons() {
                 <div style={styles.itemLeft}>
                   <span style={styles.lessonNum}>Урок {l.id}</span>
                   <div style={styles.lessonTitle}>{l.title}</div>
+                  {stars && <div style={styles.stars}>{stars}</div>}
                 </div>
 
                 <div style={styles.itemRight}>
@@ -135,6 +139,11 @@ const styles = {
   lessonTitle: {
     fontSize: "1.1rem",
     fontWeight: "600",
+  },
+  stars: {
+    fontSize: "0.85rem",
+    opacity: 0.85,
+    letterSpacing: "1px",
   },
   itemRight: {},
   badgeFree: {

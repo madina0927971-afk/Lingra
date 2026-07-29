@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
 import { getLevelStats, isLevelUnlocked, getTotalXP, getStreak, getWordCount } from "../utils/progress";
 
@@ -88,6 +89,7 @@ export default function Dashboard() {
 
   return (
     <div style={styles.page}>
+      <Navbar />
       <div style={styles.topBar}>
         <div style={styles.stat}>
           <span>⚡</span>

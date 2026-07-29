@@ -87,7 +87,7 @@ export default function PlacementTestModal({ onClose }) {
             <button
               onClick={() => {
                 onClose();
-                navigate(`/lessons?level=${recommended.code}`);
+                navigate(`/lessons/${recommended.code}`);
               }}
               style={styles.actionBtn}
             >

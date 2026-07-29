@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import { getAllWords } from "../utils/progress";
 
 const LEVEL_LABELS = {
@@ -52,6 +53,7 @@ export default function Vocabulary() {
 
   return (
     <div style={styles.page}>
+      <Navbar />
       <h1 style={styles.h1}>Мой словарь</h1>
       <p style={styles.sub}>
         {words.length > 0

@@ -1,7 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import Navbar from "../components/Navbar";
 import { getLesson, getLessons } from "../data/lessons";
 import { saveLessonResult, recordLearnedWord } from "../utils/progress";
+import { isLessonUnlocked } from "../utils/access";
 
 const styles = {
   page: {
@@ -69,6 +71,27 @@ const styles = {
   resultScore: { fontSize: "1.3rem", fontWeight: 700, marginBottom: "6px" },
   resultXP: { color: "#6c5ce7", fontWeight: 600, marginBottom: "20px" },
   resultBtnRow: { display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" },
+  lockCard: {
+    background: "#14142a",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: "18px",
+    padding: "36px",
+    maxWidth: "460px",
+    textAlign: "center",
+  },
+  lockIcon: { fontSize: "2.4rem", marginBottom: "14px" },
+  lockTitle: { fontSize: "1.3rem", fontWeight: 700, marginBottom: "10px" },
+  lockDesc: { color: "#9ca3af", fontSize: "0.95rem", lineHeight: 1.5, marginBottom: "24px" },
+  unlockBtn: {
+    display: "inline-block",
+    background: "linear-gradient(135deg, #6c5ce7, #8c7ae6)",
+    color: "#fff",
+    textDecoration: "none",
+    borderRadius: "12px",
+    padding: "14px 28px",
+    fontWeight: 700,
+    marginBottom: "14px",
+  },
 };
 
 export default function LessonView() {
@@ -88,8 +111,28 @@ export default function LessonView() {
   if (!lesson) {
     return (
       <div style={styles.page}>
+        <Navbar />
         <h1 style={styles.h1}>Урок не найден</h1>
         <Link to={`/lessons/${level || "a1-a2"}`} style={styles.back}>← Назад к урокам</Link>
+      </div>
+    );
+  }
+
+  if (!isLessonUnlocked(lesson.id)) {
+    return (
+      <div style={{ ...styles.page, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0 }}><Navbar /></div>
+        <div style={styles.lockCard}>
+          <div style={styles.lockIcon}>🔒</div>
+          <div style={styles.lockTitle}>Этот урок доступен в Premium</div>
+          <p style={styles.lockDesc}>
+            Первый урок каждого этапа открыт бесплатно. Оформите подписку или активируйте
+            ключ доступа, чтобы открыть все уроки курса и безлимитный ИИ-чат.
+          </p>
+          <Link to="/pricing" style={styles.unlockBtn}>Разблокировать сейчас →</Link>
+          <br />
+          <Link to={`/lessons/${level}`} style={styles.back}>← Назад к урокам</Link>
+        </div>
       </div>
     );
   }
@@ -102,6 +145,7 @@ export default function LessonView() {
 
     return (
       <div style={{ ...styles.page, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0 }}><Navbar /></div>
         <div style={styles.resultCard}>
           <div style={styles.resultStars}>
             {"⭐".repeat(result.stars)}{"☆".repeat(3 - result.stars)}
@@ -180,6 +224,7 @@ export default function LessonView() {
 
   return (
     <div style={styles.page}>
+      <Navbar />
       <h1 style={styles.h1}>Урок {lesson.id}: {lesson.title}</h1>
       <p style={styles.meta}>Уровень: {level}</p>
       <p style={styles.progress}>Задание {step + 1} из {lesson.exercises.length}</p>
