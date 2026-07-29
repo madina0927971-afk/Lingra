@@ -1,46 +1,158 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
+import { isLessonUnlocked } from "../utils/access";
+import { getLanguage, translations } from "../utils/i18n";
 
-const LEVEL_LABELS = {
-  "a1-a2": "A1–A2",
-  "b1-b2": "B1–B2",
-  "c1-c2": "C1–C2",
-};
+const STAGES = [
+  { code: "a1-a2", label: "A1–A2 (Основы)" },
+  { code: "b1-b2", label: "B1–B2 (Уверенный)" },
+  { code: "c1-c2", label: "C1–C2 (Продвинутый)" },
+];
+
+export default function Lessons() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const level = searchParams.get("level") || "a1-a2";
+  const [lang] = useState(getLanguage());
+  const t = translations[lang] || translations.ru;
+
+  const lessons = getLessons(level);
+
+  return (
+    <div style={styles.page}>
+      <Navbar />
+
+      <div style={styles.container}>
+        <h1 style={styles.h1}>{t.navLessons}</h1>
+
+        {/* Level Tabs */}
+        <div style={styles.tabsRow}>
+          {STAGES.map((s) => (
+            <button
+              key={s.code}
+              onClick={() => setSearchParams({ level: s.code })}
+              style={{
+                ...styles.tabBtn,
+                background: level === s.code ? "#6c5ce7" : "rgba(255, 255, 255, 0.05)",
+                color: level === s.code ? "#fff" : "#9ca3af",
+                border: level === s.code ? "none" : "1px solid rgba(255, 255, 255, 0.08)",
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Lessons List */}
+        <div style={styles.list}>
+          {lessons.map((l) => {
+            const unlocked = isLessonUnlocked(l.id);
+            return (
+              <Link
+                key={l.id}
+                to={`/lesson/${level}/${l.id}`}
+                style={styles.itemCard}
+              >
+                <div style={styles.itemLeft}>
+                  <span style={styles.lessonNum}>Урок {l.id}</span>
+                  <div style={styles.lessonTitle}>{l.title}</div>
+                </div>
+
+                <div style={styles.itemRight}>
+                  {unlocked ? (
+                    <span style={styles.badgeFree}>
+                      {l.id === 1 ? "🎁 Бесплатно" : "✓ Доступно"}
+                    </span>
+                  ) : (
+                    <span style={styles.badgeLocked}>🔒 PRO</span>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const styles = {
   page: {
     minHeight: "100vh",
     background: "#080811",
     color: "#fff",
-    padding: "32px 24px",
     fontFamily: "system-ui, sans-serif",
   },
-  h1: { fontSize: "1.8rem", marginBottom: "24px" },
-  list: { display: "grid", gap: "12px", maxWidth: "600px" },
-  item: {
-    background: "#14142a",
+  container: {
+    maxWidth: "800px",
+    margin: "0 auto",
+    padding: "40px 24px",
+  },
+  h1: { fontSize: "2.2rem", fontWeight: "800", marginBottom: "24px" },
+  tabsRow: {
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    marginBottom: "32px",
+  },
+  tabBtn: {
     borderRadius: "12px",
-    padding: "16px 20px",
+    padding: "10px 20px",
+    fontSize: "0.95rem",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  list: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "14px",
+  },
+  itemCard: {
+    background: "#14142a",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: "16px",
+    padding: "20px 24px",
     color: "#fff",
     textDecoration: "none",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    transition: "transform 0.2s, border-color 0.2s",
+  },
+  itemLeft: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  },
+  lessonNum: {
+    color: "#6c5ce7",
+    fontWeight: "700",
+    fontSize: "0.85rem",
+    textTransform: "uppercase",
+  },
+  lessonTitle: {
+    fontSize: "1.1rem",
+    fontWeight: "600",
+  },
+  itemRight: {},
+  badgeFree: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "#34d399",
+    border: "1px solid rgba(16, 185, 129, 0.3)",
+    padding: "6px 14px",
+    borderRadius: "20px",
+    fontSize: "0.85rem",
+    fontWeight: "600",
+  },
+  badgeLocked: {
+    background: "rgba(239, 68, 68, 0.15)",
+    color: "#f87171",
+    border: "1px solid rgba(239, 68, 68, 0.3)",
+    padding: "6px 14px",
+    borderRadius: "20px",
+    fontSize: "0.85rem",
+    fontWeight: "600",
   },
 };
-
-export default function Lessons() {
-  const { level = "a1-a2" } = useParams();
-  const lessons = getLessons(level);
-  const label = LEVEL_LABELS[level] || level;
-
-  return (
-    <div style={styles.page}>
-      <h1 style={styles.h1}>Уроки — {label}</h1>
-      <div style={styles.list}>
-        {lessons.map((l) => (
-          <Link key={l.id} to={`/lesson/${level}/${l.id}`} style={styles.item}>
-            {l.id}. {l.title}
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}

@@ -35,8 +35,8 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-5",
-        max_tokens: 300,
+        model: process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-20241022",
+        max_tokens: 400,
         system: systemPrompt,
         messages,
       }),

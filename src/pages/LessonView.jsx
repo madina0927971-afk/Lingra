@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { getLesson, getLessons } from "../data/lessons";
+import { saveLessonResult, recordLearnedWord } from "../utils/progress";
 
 const styles = {
   page: {
@@ -56,6 +57,18 @@ const styles = {
   },
   back: { color: "#6c5ce7", textDecoration: "none", display: "inline-block", marginTop: "20px" },
   progress: { opacity: 0.5, fontSize: "0.9rem", marginBottom: "12px" },
+  scoreBadge: { opacity: 0.7, fontSize: "0.85rem", marginBottom: "12px" },
+  resultCard: {
+    background: "#14142a",
+    borderRadius: "14px",
+    padding: "32px",
+    maxWidth: "460px",
+    textAlign: "center",
+  },
+  resultStars: { fontSize: "2.2rem", letterSpacing: "6px", marginBottom: "12px" },
+  resultScore: { fontSize: "1.3rem", fontWeight: 700, marginBottom: "6px" },
+  resultXP: { color: "#6c5ce7", fontWeight: 600, marginBottom: "20px" },
+  resultBtnRow: { display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" },
 };
 
 export default function LessonView() {
@@ -68,12 +81,56 @@ export default function LessonView() {
   const [textAnswer, setTextAnswer] = useState("");
   const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
   const [selected, setSelected] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [result, setResult] = useState(null); // { xpEarned, stars }
 
   if (!lesson) {
     return (
       <div style={styles.page}>
         <h1 style={styles.h1}>Урок не найден</h1>
-        <Link to="/lessons" style={styles.back}>← Назад к урокам</Link>
+        <Link to={`/lessons/${level || "a1-a2"}`} style={styles.back}>← Назад к урокам</Link>
+      </div>
+    );
+  }
+
+  const normalize = (s) => s.trim().toLowerCase().replace(/[.,!?]/g, "");
+
+  if (finished) {
+    const nextLessonIdx = allLessons.findIndex((l) => l.id === lesson.id) + 1;
+    const nextLesson = allLessons[nextLessonIdx];
+
+    return (
+      <div style={{ ...styles.page, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={styles.resultCard}>
+          <div style={styles.resultStars}>
+            {"⭐".repeat(result.stars)}{"☆".repeat(3 - result.stars)}
+          </div>
+          <div style={styles.resultScore}>
+            Результат: {correctCount} из {lesson.exercises.length}
+          </div>
+          <div style={styles.resultXP}>+{result.xpEarned} XP</div>
+          <div style={styles.resultBtnRow}>
+            {nextLesson ? (
+              <button
+                style={styles.nextBtn}
+                onClick={() => navigate(`/lesson/${level}/${nextLesson.id}`)}
+              >
+                Следующий урок →
+              </button>
+            ) : (
+              <button style={styles.nextBtn} onClick={() => navigate("/dashboard")}>
+                Стадия завершена! 🎉
+              </button>
+            )}
+            <button
+              style={{ ...styles.nextBtn, background: "#1f1f3d" }}
+              onClick={() => navigate(`/lessons/${level}`)}
+            >
+              К списку уроков
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -81,26 +138,38 @@ export default function LessonView() {
   const exercise = lesson.exercises[step];
   const isLast = step === lesson.exercises.length - 1;
 
-  const normalize = (s) => s.trim().toLowerCase().replace(/[.,!?]/g, "");
-
   const checkChoose = (opt) => {
+    if (feedback !== null) return;
     setSelected(opt);
-    setFeedback(normalize(opt) === normalize(exercise.answer) ? "correct" : "wrong");
+    const isCorrect = normalize(opt) === normalize(exercise.answer);
+    if (isCorrect) {
+      setCorrectCount((c) => c + 1);
+      recordLearnedWord(level, lesson.id, exercise.answer, exercise.question);
+    }
+    setFeedback(isCorrect ? "correct" : "wrong");
   };
 
   const checkText = () => {
-    setFeedback(normalize(textAnswer) === normalize(exercise.answer) ? "correct" : "wrong");
+    if (feedback !== null) return;
+    const isCorrect = normalize(textAnswer) === normalize(exercise.answer);
+    if (isCorrect) {
+      setCorrectCount((c) => c + 1);
+      recordLearnedWord(level, lesson.id, exercise.answer, exercise.question);
+    }
+    setFeedback(isCorrect ? "correct" : "wrong");
   };
 
   const next = () => {
     if (isLast) {
-      const idx = allLessons.findIndex((l) => l.id === lesson.id);
-      const nextLesson = allLessons[idx + 1];
-      if (nextLesson) {
-        navigate(`/lesson/${level}/${nextLesson.id}`);
-      } else {
-        navigate("/lessons");
-      }
+      const finalCorrect = correctCount;
+      const { xpEarned, stars } = saveLessonResult(
+        level,
+        lesson.id,
+        finalCorrect,
+        lesson.exercises.length
+      );
+      setResult({ xpEarned, stars });
+      setFinished(true);
       return;
     }
     setStep((s) => s + 1);
@@ -114,6 +183,7 @@ export default function LessonView() {
       <h1 style={styles.h1}>Урок {lesson.id}: {lesson.title}</h1>
       <p style={styles.meta}>Уровень: {level}</p>
       <p style={styles.progress}>Задание {step + 1} из {lesson.exercises.length}</p>
+      <p style={styles.scoreBadge}>✓ Верно: {correctCount}</p>
 
       <div style={styles.card}>
         <p style={styles.question}>{exercise.question}</p>
@@ -171,7 +241,7 @@ export default function LessonView() {
         )}
       </div>
 
-      <Link to="/lessons" style={styles.back}>← Назад к урокам</Link>
+      <Link to={`/lessons/${level}`} style={styles.back}>← Назад к урокам</Link>
     </div>
   );
 }
