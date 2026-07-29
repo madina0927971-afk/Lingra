@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import PlacementTestModal from "../components/PlacementTestModal";
-import { getLanguage, translations } from "../utils/i18n";
+import { useLanguage, translations } from "../utils/i18n";
 
 export default function Home() {
-  const [lang] = useState(getLanguage());
+  const lang = useLanguage();
   const [showTest, setShowTest] = useState(false);
   const [sandboxInput, setSandboxInput] = useState("");
   const [sandboxResponse, setSandboxResponse] = useState(null);
@@ -147,35 +147,6 @@ export default function Home() {
             <Link to="/lessons/c1-c2" style={styles.stageLink}>
               Уроки C1-C2 →
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Reviews & Social Proof */}
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>{t.reviewsTitle}</h2>
-        <div style={styles.grid3}>
-          <div style={styles.reviewCard}>
-            <div style={styles.stars}>★★★★★</div>
-            <p style={styles.reviewText}>
-              «За 2 недели общения с ИИ-репетитором я перестал бояться говорить на собеседовании. Отличный курс!»
-            </p>
-
-            <div style={styles.reviewer}>— Сардор М., Ташкент</div>
-          </div>
-          <div style={styles.reviewCard}>
-            <div style={styles.stars}>★★★★★</div>
-            <p style={styles.reviewText}>
-              «Очень удобно, что объяснения есть и на узбекском, и на русском. Все уроки структурированы по делу.»
-            </p>
-            <div style={styles.reviewer}>— Нигора К., Самарканд</div>
-          </div>
-          <div style={styles.reviewCard}>
-            <div style={styles.stars}>★★★★★</div>
-            <p style={styles.reviewText}>
-              «Оплатил через Telegram-бота локальной картой Uzcard. Доступ открылся сразу же!»
-            </p>
-            <div style={styles.reviewer}>— Алексей Р., Алматы</div>
           </div>
         </div>
       </section>
@@ -424,27 +395,6 @@ const styles = {
     color: "#a29bfe",
     textDecoration: "none",
     fontWeight: "600",
-  },
-  reviewCard: {
-    background: "#14142a",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    borderRadius: "18px",
-    padding: "24px",
-  },
-  stars: {
-    color: "#f59e0b",
-    marginBottom: "12px",
-  },
-  reviewText: {
-    color: "#d1d5db",
-    fontStyle: "italic",
-    lineHeight: "1.5",
-    marginBottom: "16px",
-  },
-  reviewer: {
-    color: "#9ca3af",
-    fontWeight: "600",
-    fontSize: "0.9rem",
   },
   faqList: {
     maxWidth: "800px",

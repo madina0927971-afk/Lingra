@@ -3,8 +3,7 @@ import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
 import { isLessonUnlocked } from "../utils/access";
 import { getLessonResult } from "../utils/progress";
-import { getLanguage, translations } from "../utils/i18n";
-import { useState } from "react";
+import { useLanguage, translations } from "../utils/i18n";
 
 const STAGES = [
   { code: "a1-a2", label: "A1–A2 (Основы)" },
@@ -15,7 +14,7 @@ const STAGES = [
 export default function Lessons() {
   const { level = "a1-a2" } = useParams();
   const navigate = useNavigate();
-  const [lang] = useState(getLanguage());
+  const lang = useLanguage();
   const t = translations[lang] || translations.ru;
 
   const lessons = getLessons(level);

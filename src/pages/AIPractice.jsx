@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getAIMessageQuota, recordAIMessageSent, isPremium } from "../utils/access";
-import { getLanguage, translations } from "../utils/i18n";
+import { useLanguage, translations } from "../utils/i18n";
 import { simulateAIResponse } from "../utils/simulateAI";
 
 export default function AIPractice() {
-  const [lang] = useState(getLanguage());
+  const lang = useLanguage();
   const t = translations[lang] || translations.ru;
 
   const [messages, setMessages] = useState([

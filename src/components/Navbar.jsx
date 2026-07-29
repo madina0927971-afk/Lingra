@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { getLanguage, setLanguage, translations } from "../utils/i18n";
+import { useLanguage, setLanguage, translations } from "../utils/i18n";
 import { isPremium } from "../utils/access";
 
 export default function Navbar() {
-  const [lang, setLangState] = useState(getLanguage());
+  const lang = useLanguage();
   const [premium, setPremiumState] = useState(isPremium());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    const handleLang = () => setLangState(getLanguage());
-    window.addEventListener("lingra_lang_changed", handleLang);
-    return () => window.removeEventListener("lingra_lang_changed", handleLang);
-  }, []);
 
   useEffect(() => {
     setPremiumState(isPremium());
@@ -23,7 +17,6 @@ export default function Navbar() {
 
   const toggleLang = (newLang) => {
     setLanguage(newLang);
-    setLangState(newLang);
   };
 
   const navLinks = [

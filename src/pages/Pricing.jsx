@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { getLanguage, translations } from "../utils/i18n";
+import { useLanguage, translations } from "../utils/i18n";
 import { activatePremium, isPremium, setPremiumDirectly } from "../utils/access";
 
 const plans = [
@@ -31,7 +31,7 @@ const plans = [
 ];
 
 export default function Pricing() {
-  const [lang] = useState(getLanguage());
+  const lang = useLanguage();
   const [code, setCode] = useState("");
   const [statusMsg, setStatusMsg] = useState(null);
   const [premium, setPremiumState] = useState(isPremium());

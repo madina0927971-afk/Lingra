@@ -1,4 +1,5 @@
 // Lingra Localization (RU / UZ)
+import { useState, useEffect } from "react";
 
 const LANG_KEY = "lingra_lang";
 
@@ -13,6 +14,20 @@ export function getLanguage() {
 export function setLanguage(lang) {
   localStorage.setItem(LANG_KEY, lang);
   window.dispatchEvent(new Event("lingra_lang_changed"));
+}
+
+// Общий хук: держит язык в состоянии компонента и обновляет его мгновенно,
+// как только пользователь переключит RU/UZ в Navbar — без перезагрузки страницы.
+export function useLanguage() {
+  const [lang, setLang] = useState(getLanguage());
+
+  useEffect(() => {
+    const handleChange = () => setLang(getLanguage());
+    window.addEventListener("lingra_lang_changed", handleChange);
+    return () => window.removeEventListener("lingra_lang_changed", handleChange);
+  }, []);
+
+  return lang;
 }
 
 export const translations = {
@@ -47,7 +62,6 @@ export const translations = {
     stage2Desc: "Свободное общение на работе и в путешествиях, просмотр фильмов, сложная грамматика.",
     stage3Name: "Этап 3: C1 – C2 (Свободное владение)",
     stage3Desc: "Бизнес-английский, собеседования, академические статьи, беглый разговор как носитель.",
-    reviewsTitle: "Отзывы наших учеников",
     faqTitle: "Часто задаваемые вопросы",
     faq1Q: "Подходит ли курс начинающим с нуля?",
     faq1A: "Да! Раздел A1-A2 создан специально для тех, кто учит язык с самых основ. Объяснения даются понятным языком.",
@@ -101,7 +115,6 @@ export const translations = {
     stage2Desc: "Ishda va sayohatda erkin muloqot, kinolarni ko'rish, murakkab grammatika.",
     stage3Name: "3-Bosqich: C1 – C2 (Erkin so'zlashuv)",
     stage3Desc: "Biznes ingliz tili, suhbatlar, akademik maqolalar va ravon gapirish.",
-    reviewsTitle: "O'quvchilarimiz fikrlari",
     faqTitle: "Ko'p beriladigan savollar",
     faq1Q: "Noldan boshlayotganlarga mos keladimi?",
     faq1A: "Ha! A1-A2 bo'limi tildan mutlaqo xabari yo'qlar uchun yaratilgan. Tushuntirishlar juda sodda berilgan.",
