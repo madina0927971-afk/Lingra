@@ -1,15 +1,23 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { getLessons } from "../data/lessons";
+import { getLessons, localize } from "../data/lessons";
 import { isLessonUnlocked } from "../utils/access";
 import { getLessonResult } from "../utils/progress";
 import { useLanguage, translations } from "../utils/i18n";
 
-const STAGES = [
-  { code: "a1-a2", label: "A1–A2 (Основы)" },
-  { code: "b1-b2", label: "B1–B2 (Уверенный)" },
-  { code: "c1-c2", label: "C1–C2 (Продвинутый)" },
-];
+const STAGE_LABELS = {
+  ru: {
+    "a1-a2": "A1–A2 (Основы)",
+    "b1-b2": "B1–B2 (Уверенный)",
+    "c1-c2": "C1–C2 (Продвинутый)",
+  },
+  uz: {
+    "a1-a2": "A1–A2 (Asoslar)",
+    "b1-b2": "B1–B2 (Ishonchli)",
+    "c1-c2": "C1–C2 (Ilg'or)",
+  },
+};
+const STAGES = ["a1-a2", "b1-b2", "c1-c2"];
 
 export default function Lessons() {
   const { level = "a1-a2" } = useParams();
@@ -28,18 +36,18 @@ export default function Lessons() {
 
         {/* Level Tabs */}
         <div style={styles.tabsRow}>
-          {STAGES.map((s) => (
+          {STAGES.map((code) => (
             <button
-              key={s.code}
-              onClick={() => navigate(`/lessons/${s.code}`)}
+              key={code}
+              onClick={() => navigate(`/lessons/${code}`)}
               style={{
                 ...styles.tabBtn,
-                background: level === s.code ? "#6c5ce7" : "rgba(255, 255, 255, 0.05)",
-                color: level === s.code ? "#fff" : "#9ca3af",
-                border: level === s.code ? "none" : "1px solid rgba(255, 255, 255, 0.08)",
+                background: level === code ? "#6c5ce7" : "rgba(255, 255, 255, 0.05)",
+                color: level === code ? "#fff" : "#9ca3af",
+                border: level === code ? "none" : "1px solid rgba(255, 255, 255, 0.08)",
               }}
             >
-              {s.label}
+              {(STAGE_LABELS[lang] || STAGE_LABELS.ru)[code]}
             </button>
           ))}
         </div>
@@ -57,15 +65,17 @@ export default function Lessons() {
                 style={styles.itemCard}
               >
                 <div style={styles.itemLeft}>
-                  <span style={styles.lessonNum}>Урок {l.id}</span>
-                  <div style={styles.lessonTitle}>{l.title}</div>
+                  <span style={styles.lessonNum}>{t.lvLessonWord} {l.id}</span>
+                  <div style={styles.lessonTitle}>{localize(l.title, lang)}</div>
                   {stars && <div style={styles.stars}>{stars}</div>}
                 </div>
 
                 <div style={styles.itemRight}>
                   {unlocked ? (
                     <span style={styles.badgeFree}>
-                      {l.id === 1 ? "🎁 Бесплатно" : "✓ Доступно"}
+                      {l.id === 1
+                        ? (lang === "uz" ? "🎁 Bepul" : "🎁 Бесплатно")
+                        : (lang === "uz" ? "✓ Ochiq" : "✓ Доступно")}
                     </span>
                   ) : (
                     <span style={styles.badgeLocked}>🔒 PRO</span>

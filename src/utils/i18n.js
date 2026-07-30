@@ -93,6 +93,7 @@ export const translations = {
     dashStage3Title: "Стадия 3: Свободное владение",
     dashLessonsProgress: "уроков пройдено",
     dashLockedHint: "Пройдите 70% предыдущей стадии, чтобы открыть эту",
+    dashLockedHintPremium: "Урок 1 бесплатный, остальные — по Premium-подписке",
     dashAITitle: "🤖 ИИ-репетитор",
     dashAISubtitle: "Практика в чате в любое время",
     // LessonView
@@ -184,6 +185,7 @@ export const translations = {
     dashStage3Title: "3-Bosqich: Erkin so'zlashuv",
     dashLessonsProgress: "dars o'tildi",
     dashLockedHint: "Ochish uchun oldingi bosqichning 70% ni bajaring",
+    dashLockedHintPremium: "1-dars bepul, qolganlari Premium obuna orqali",
     dashAITitle: "🤖 AI-repetitor",
     dashAISubtitle: "Istalgan vaqtda chatda mashq qiling",
     // LessonView

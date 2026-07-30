@@ -30,6 +30,12 @@ export default function Navbar() {
 
   return (
     <header style={styles.header}>
+      <style>{`
+        @media (max-width: 768px) {
+          .lingra-desktop-nav { display: none !important; }
+          .lingra-hamburger { display: inline-block !important; }
+        }
+      `}</style>
       <div style={styles.container}>
         {/* Brand */}
         <Link to="/" style={styles.brand}>
@@ -39,7 +45,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <nav style={styles.desktopNav}>
+        <nav className="lingra-desktop-nav" style={styles.desktopNav}>
           {navLinks.map((link) => {
             const active = location.pathname === link.to;
             return (
@@ -90,6 +96,7 @@ export default function Navbar() {
           {/* Hamburger toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lingra-hamburger"
             style={styles.hamburger}
             aria-label="Toggle menu"
           >

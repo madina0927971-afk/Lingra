@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
-import { getLevelStats, isLevelUnlocked, getTotalXP, getStreak, getWordCount } from "../utils/progress";
+import { getLevelStats, getTotalXP, getStreak, getWordCount } from "../utils/progress";
+import { isPremium } from "../utils/access";
 import { useLanguage, translations } from "../utils/i18n";
 
 const styles = {
@@ -91,6 +92,8 @@ export default function Dashboard() {
     "c1-c2": getLessons("c1-c2").length,
   };
 
+  const premium = isPremium();
+
   return (
     <div style={styles.page}>
       <Navbar />
@@ -117,7 +120,6 @@ export default function Dashboard() {
         {stages.map((s) => {
           const total = lessonsCountByLevel[s.level];
           const stats = getLevelStats(s.level, total);
-          const unlocked = isLevelUnlocked(s.level, lessonsCountByLevel);
 
           const cardContent = (
             <>
@@ -129,22 +131,17 @@ export default function Dashboard() {
               <div style={styles.progressText}>
                 {stats.completed}/{stats.total} {t.dashLessonsProgress} ({stats.percent}%)
               </div>
-              {!unlocked && <div style={styles.lockBadge}>🔒</div>}
+              {!premium && <div style={styles.lockBadge}>🔒 PRO</div>}
             </>
           );
 
-          return unlocked ? (
-            <Link key={s.level} to={`/lessons/${s.level}`} style={styles.card}>
+          // Уровень всегда доступен для просмотра списка уроков (как и на странице
+          // "Kurslar"), реальное ограничение — Premium на отдельные уроки, поэтому
+          // честно ведём именно туда, а не показываем недостижимый прогресс-барьер.
+          return (
+            <Link key={s.level} to={`/lessons/${s.level}`} style={styles.card} title={!premium ? t.dashLockedHintPremium : undefined}>
               {cardContent}
             </Link>
-          ) : (
-            <div
-              key={s.level}
-              style={{ ...styles.card, ...styles.cardLocked }}
-              title={t.dashLockedHint}
-            >
-              {cardContent}
-            </div>
           );
         })}
 

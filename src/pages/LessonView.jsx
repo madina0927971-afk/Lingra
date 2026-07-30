@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { getLesson, getLessons } from "../data/lessons";
+import { getLesson, getLessons, localize } from "../data/lessons";
 import { saveLessonResult, recordLearnedWord } from "../utils/progress";
 import { isLessonUnlocked } from "../utils/access";
 import { useLanguage, translations } from "../utils/i18n";
@@ -181,24 +181,27 @@ export default function LessonView() {
 
   const exercise = lesson.exercises[step];
   const isLast = step === lesson.exercises.length - 1;
+  const qText = localize(exercise.question, lang);
+  const qOptions = localize(exercise.options, lang);
+  const qAnswer = localize(exercise.answer, lang);
 
   const checkChoose = (opt) => {
     if (feedback !== null) return;
     setSelected(opt);
-    const isCorrect = normalize(opt) === normalize(exercise.answer);
+    const isCorrect = normalize(opt) === normalize(qAnswer);
     if (isCorrect) {
       setCorrectCount((c) => c + 1);
-      recordLearnedWord(level, lesson.id, exercise.answer, exercise.question);
+      recordLearnedWord(level, lesson.id, qAnswer, qText);
     }
     setFeedback(isCorrect ? "correct" : "wrong");
   };
 
   const checkText = () => {
     if (feedback !== null) return;
-    const isCorrect = normalize(textAnswer) === normalize(exercise.answer);
+    const isCorrect = normalize(textAnswer) === normalize(qAnswer);
     if (isCorrect) {
       setCorrectCount((c) => c + 1);
-      recordLearnedWord(level, lesson.id, exercise.answer, exercise.question);
+      recordLearnedWord(level, lesson.id, qAnswer, qText);
     }
     setFeedback(isCorrect ? "correct" : "wrong");
   };
@@ -225,20 +228,20 @@ export default function LessonView() {
   return (
     <div style={styles.page}>
       <Navbar />
-      <h1 style={styles.h1}>{t.lvLessonWord} {lesson.id}: {lesson.title}</h1>
+      <h1 style={styles.h1}>{t.lvLessonWord} {lesson.id}: {localize(lesson.title, lang)}</h1>
       <p style={styles.meta}>{t.lvLevelLabel}: {level}</p>
       <p style={styles.progress}>{t.lvTaskLabel} {step + 1} {t.lvOfLabel} {lesson.exercises.length}</p>
       <p style={styles.scoreBadge}>✓ {t.lvCorrectLabel}: {correctCount}</p>
 
       <div style={styles.card}>
-        <p style={styles.question}>{exercise.question}</p>
+        <p style={styles.question}>{qText}</p>
 
         {exercise.type === "choose" && (
           <>
-            {exercise.options.map((opt) => {
+            {qOptions.map((opt) => {
               let bg = "#1f1f3d";
               if (selected === opt) {
-                bg = normalize(opt) === normalize(exercise.answer) ? "#1f6d3d" : "#6d1f2a";
+                bg = normalize(opt) === normalize(qAnswer) ? "#1f6d3d" : "#6d1f2a";
               }
               return (
                 <button
@@ -275,7 +278,7 @@ export default function LessonView() {
         )}
         {feedback === "wrong" && (
           <p style={{ ...styles.feedback, ...styles.wrong }}>
-            {t.lvWrongFeedback} {exercise.answer}
+            {t.lvWrongFeedback} {qAnswer}
           </p>
         )}
 

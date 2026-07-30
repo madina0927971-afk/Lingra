@@ -74,12 +74,12 @@ export default function AIPractice() {
       if (!data.text) throw new Error("empty response");
       setMessages((m) => [...m, { role: "assistant", text: data.text }]);
     } catch {
-      // /api/chat недоступен (нет ключа ANTHROPIC_API_KEY, сеть и т.п.) —
-      // бесшовно переключаемся на локальную симуляцию, чтобы демо-сценарий
-      // никогда не показывал пользователю ошибку.
+      // /api/chat недоступен (нет ключа/кредитов ANTHROPIC_API_KEY, сеть и т.п.) —
+      // переключаемся на локальную симуляцию, но честно помечаем сообщение как
+      // demo-режим, чтобы не выдавать заскриптованный ответ за настоящий ИИ.
       await new Promise((r) => setTimeout(r, 400 + Math.random() * 400));
       const simulated = simulateAIResponse(userMsg.text, updated);
-      setMessages((m) => [...m, { role: "assistant", text: simulated }]);
+      setMessages((m) => [...m, { role: "assistant", text: simulated, simulated: true }]);
     } finally {
       setLoading(false);
     }
@@ -121,6 +121,13 @@ export default function AIPractice() {
           </div>
         )}
 
+        {messages.some((m) => m.simulated) && (
+          <div style={styles.demoBanner}>
+            ⚠️ ИИ-репетитор сейчас временно недоступен. Вы получаете заготовленные
+            демо-ответы, а не живой ИИ — мы уже работаем над восстановлением.
+          </div>
+        )}
+
         {/* Chat Box */}
         <div style={styles.chatBox} ref={chatRef}>
           {messages.map((m, i) => {
@@ -142,6 +149,11 @@ export default function AIPractice() {
                 >
                   <div style={styles.msgHeader}>
                     <span>{isAI ? "🤖 Lingra Tutor" : "👤 Вы"}</span>
+                    {isAI && m.simulated && (
+                      <span style={styles.demoTag} title="ИИ временно недоступен — это заготовленный демо-ответ">
+                        DEMO
+                      </span>
+                    )}
                     {isAI && (
                       <button
                         onClick={() => speakText(m.text)}
@@ -236,6 +248,17 @@ const styles = {
     fontWeight: "700",
     marginLeft: "8px",
   },
+  demoBanner: {
+    background: "rgba(251, 191, 36, 0.12)",
+    border: "1px solid rgba(251, 191, 36, 0.3)",
+    color: "#fbbf24",
+    padding: "12px 18px",
+    borderRadius: "12px",
+    marginBottom: "20px",
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    lineHeight: 1.4,
+  },
   chatBox: {
     flex: 1,
     background: "rgba(20, 20, 42, 0.5)",
@@ -279,6 +302,16 @@ const styles = {
     padding: "2px 8px",
     fontSize: "0.75rem",
     cursor: "pointer",
+  },
+  demoTag: {
+    background: "rgba(251, 191, 36, 0.15)",
+    color: "#fbbf24",
+    border: "1px solid rgba(251, 191, 36, 0.35)",
+    borderRadius: "6px",
+    padding: "2px 8px",
+    fontSize: "0.7rem",
+    fontWeight: "700",
+    letterSpacing: "0.5px",
   },
   msgText: {
     fontSize: "1rem",

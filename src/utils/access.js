@@ -17,7 +17,7 @@ export function activatePremium(code) {
   const cleanCode = (code || "").trim().toUpperCase();
   if (!cleanCode) return { success: false, message: "Введите промокод или ключ активации" };
   
-  if (PROMO_CODES.includes(cleanCode) || cleanCode.length >= 8) {
+  if (PROMO_CODES.includes(cleanCode)) {
     localStorage.setItem(PREMIUM_KEY, "true");
     return { success: true, message: "Премиум доступ успешно активирован! 🚀" };
   }

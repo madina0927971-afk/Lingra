@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useLanguage, translations } from "../utils/i18n";
-import { activatePremium, isPremium, setPremiumDirectly } from "../utils/access";
+import { activatePremium, isPremium } from "../utils/access";
 
 const plans = [
   {
@@ -45,12 +45,6 @@ export default function Pricing() {
     if (res.success) {
       setPremiumState(true);
     }
-  };
-
-  const handleDemoUnlock = () => {
-    setPremiumDirectly(true);
-    setPremiumState(true);
-    setStatusMsg({ success: true, message: "Демо-доступ PRO активирован!" });
   };
 
   return (
@@ -143,15 +137,6 @@ export default function Pricing() {
             >
               {statusMsg.message}
             </p>
-          )}
-
-          {!premium && (
-            <div style={styles.demoBox}>
-              <span>Тестовый промокод для мгновенной проверки: </span>
-              <button onClick={handleDemoUnlock} style={styles.demoLink}>
-                Активировать PRO (Тест)
-              </button>
-            </div>
           )}
         </div>
       </div>
