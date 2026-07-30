@@ -2,12 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getLessons } from "../data/lessons";
 import { getLevelStats, isLevelUnlocked, getTotalXP, getStreak, getWordCount } from "../utils/progress";
-
-const stages = [
-  { level: "a1-a2", title: "Стадия 1: Основы", label: "A1–A2" },
-  { level: "b1-b2", title: "Стадия 2: Уверенное общение", label: "B1–B2" },
-  { level: "c1-c2", title: "Стадия 3: Свободное владение", label: "C1–C2" },
-];
+import { useLanguage, translations } from "../utils/i18n";
 
 const styles = {
   page: {
@@ -77,9 +72,18 @@ const styles = {
 };
 
 export default function Dashboard() {
+  const lang = useLanguage();
+  const t = translations[lang] || translations.ru;
+
   const xp = getTotalXP();
   const streak = getStreak();
   const wordCount = getWordCount();
+
+  const stages = [
+    { level: "a1-a2", title: t.dashStage1Title, label: "A1–A2" },
+    { level: "b1-b2", title: t.dashStage2Title, label: "B1–B2" },
+    { level: "c1-c2", title: t.dashStage3Title, label: "C1–C2" },
+  ];
 
   const lessonsCountByLevel = {
     "a1-a2": getLessons("a1-a2").length,
@@ -94,21 +98,21 @@ export default function Dashboard() {
         <div style={styles.stat}>
           <span>⚡</span>
           <span style={styles.statValue}>{xp}</span>
-          <span style={{ opacity: 0.6 }}>XP</span>
+          <span style={{ opacity: 0.6 }}>{t.dashXpLabel}</span>
         </div>
         <div style={styles.stat}>
           <span>🔥</span>
           <span style={styles.statValue}>{streak}</span>
-          <span style={{ opacity: 0.6 }}>дней подряд</span>
+          <span style={{ opacity: 0.6 }}>{t.dashStreakLabel}</span>
         </div>
         <Link to="/vocabulary" style={{ ...styles.stat, textDecoration: "none", color: "#fff" }}>
           <span>📚</span>
           <span style={styles.statValue}>{wordCount}</span>
-          <span style={{ opacity: 0.6 }}>слов в словаре</span>
+          <span style={{ opacity: 0.6 }}>{t.dashWordsLabel}</span>
         </Link>
       </div>
 
-      <h1 style={styles.h1}>Твой прогресс</h1>
+      <h1 style={styles.h1}>{t.dashTitle}</h1>
       <div style={styles.grid}>
         {stages.map((s) => {
           const total = lessonsCountByLevel[s.level];
@@ -123,7 +127,7 @@ export default function Dashboard() {
                 <div style={{ ...styles.barFill, width: `${stats.percent}%` }} />
               </div>
               <div style={styles.progressText}>
-                {stats.completed}/{stats.total} уроков пройдено ({stats.percent}%)
+                {stats.completed}/{stats.total} {t.dashLessonsProgress} ({stats.percent}%)
               </div>
               {!unlocked && <div style={styles.lockBadge}>🔒</div>}
             </>
@@ -137,7 +141,7 @@ export default function Dashboard() {
             <div
               key={s.level}
               style={{ ...styles.card, ...styles.cardLocked }}
-              title="Пройдите 70% предыдущей стадии, чтобы открыть эту"
+              title={t.dashLockedHint}
             >
               {cardContent}
             </div>
@@ -145,8 +149,8 @@ export default function Dashboard() {
         })}
 
         <Link to="/ai-practice" style={styles.aiCard}>
-          <div style={styles.cardTitle}>🤖 ИИ-репетитор</div>
-          <div style={{ opacity: 0.85, fontSize: "0.9rem" }}>Практика в чате в любое время</div>
+          <div style={styles.cardTitle}>{t.dashAITitle}</div>
+          <div style={{ opacity: 0.85, fontSize: "0.9rem" }}>{t.dashAISubtitle}</div>
         </Link>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getAllWords } from "../utils/progress";
+import { useLanguage, translations } from "../utils/i18n";
 
 const LEVEL_LABELS = {
   "a1-a2": "A1–A2",
@@ -50,21 +51,22 @@ const styles = {
 
 export default function Vocabulary() {
   const words = getAllWords();
+  const lang = useLanguage();
+  const t = translations[lang] || translations.ru;
+  const dateLocale = lang === "uz" ? "uz-UZ" : "ru-RU";
 
   return (
     <div style={styles.page}>
       <Navbar />
-      <h1 style={styles.h1}>Мой словарь</h1>
+      <h1 style={styles.h1}>{t.vocTitle}</h1>
       <p style={styles.sub}>
         {words.length > 0
-          ? `${words.length} слов и фраз выучено — сохраняется на этом устройстве`
-          : "Пока пусто — пройдите первый урок, чтобы начать собирать слова"}
+          ? `${words.length} ${t.vocSubtitleFilled}`
+          : t.vocSubtitleEmpty}
       </p>
 
       {words.length === 0 ? (
-        <div style={styles.empty}>
-          Слова появляются здесь автоматически каждый раз, когда вы отвечаете правильно в уроке.
-        </div>
+        <div style={styles.empty}>{t.vocEmptyHint}</div>
       ) : (
         <div style={styles.list}>
           {words.map((w) => (
@@ -75,15 +77,15 @@ export default function Vocabulary() {
                 <span className="badge" style={styles.badge}>
                   {LEVEL_LABELS[w.level] || w.level}
                 </span>
-                <span>Повторено раз: {w.timesCorrect}</span>
-                <span>Выучено: {new Date(w.firstLearnedAt).toLocaleDateString("ru-RU")}</span>
+                <span>{t.vocRepeatedLabel}: {w.timesCorrect}</span>
+                <span>{t.vocLearnedLabel}: {new Date(w.firstLearnedAt).toLocaleDateString(dateLocale)}</span>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <Link to="/dashboard" style={styles.back}>← Назад к прогрессу</Link>
+      <Link to="/dashboard" style={styles.back}>{t.vocBackToProgress}</Link>
     </div>
   );
 }

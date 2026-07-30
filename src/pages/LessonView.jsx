@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { getLesson, getLessons } from "../data/lessons";
 import { saveLessonResult, recordLearnedWord } from "../utils/progress";
 import { isLessonUnlocked } from "../utils/access";
+import { useLanguage, translations } from "../utils/i18n";
 
 const styles = {
   page: {
@@ -99,6 +100,8 @@ export default function LessonView() {
   const navigate = useNavigate();
   const lesson = getLesson(level, id);
   const allLessons = getLessons(level);
+  const lang = useLanguage();
+  const t = translations[lang] || translations.ru;
 
   const [step, setStep] = useState(0);
   const [textAnswer, setTextAnswer] = useState("");
@@ -112,8 +115,8 @@ export default function LessonView() {
     return (
       <div style={styles.page}>
         <Navbar />
-        <h1 style={styles.h1}>Урок не найден</h1>
-        <Link to={`/lessons/${level || "a1-a2"}`} style={styles.back}>← Назад к урокам</Link>
+        <h1 style={styles.h1}>{t.lvNotFound}</h1>
+        <Link to={`/lessons/${level || "a1-a2"}`} style={styles.back}>{t.lvBackToLessons}</Link>
       </div>
     );
   }
@@ -124,14 +127,11 @@ export default function LessonView() {
         <div style={{ position: "absolute", top: 0, left: 0, right: 0 }}><Navbar /></div>
         <div style={styles.lockCard}>
           <div style={styles.lockIcon}>🔒</div>
-          <div style={styles.lockTitle}>Этот урок доступен в Premium</div>
-          <p style={styles.lockDesc}>
-            Первый урок каждого этапа открыт бесплатно. Оформите подписку или активируйте
-            ключ доступа, чтобы открыть все уроки курса и безлимитный ИИ-чат.
-          </p>
-          <Link to="/pricing" style={styles.unlockBtn}>Разблокировать сейчас →</Link>
+          <div style={styles.lockTitle}>{t.lockedLessonTitle.replace("🔒 ", "")}</div>
+          <p style={styles.lockDesc}>{t.lockedLessonDesc}</p>
+          <Link to="/pricing" style={styles.unlockBtn}>{t.unlockNowBtn}</Link>
           <br />
-          <Link to={`/lessons/${level}`} style={styles.back}>← Назад к урокам</Link>
+          <Link to={`/lessons/${level}`} style={styles.back}>{t.lvBackToLessons}</Link>
         </div>
       </div>
     );
@@ -151,7 +151,7 @@ export default function LessonView() {
             {"⭐".repeat(result.stars)}{"☆".repeat(3 - result.stars)}
           </div>
           <div style={styles.resultScore}>
-            Результат: {correctCount} из {lesson.exercises.length}
+            {t.lvResultLabel}: {correctCount} {t.lvOfLabel} {lesson.exercises.length}
           </div>
           <div style={styles.resultXP}>+{result.xpEarned} XP</div>
           <div style={styles.resultBtnRow}>
@@ -160,18 +160,18 @@ export default function LessonView() {
                 style={styles.nextBtn}
                 onClick={() => navigate(`/lesson/${level}/${nextLesson.id}`)}
               >
-                Следующий урок →
+                {t.lvNextLessonBtn}
               </button>
             ) : (
               <button style={styles.nextBtn} onClick={() => navigate("/dashboard")}>
-                Стадия завершена! 🎉
+                {t.lvStageCompleteBtn}
               </button>
             )}
             <button
               style={{ ...styles.nextBtn, background: "#1f1f3d" }}
               onClick={() => navigate(`/lessons/${level}`)}
             >
-              К списку уроков
+              {t.lvBackToLessonsList}
             </button>
           </div>
         </div>
@@ -225,10 +225,10 @@ export default function LessonView() {
   return (
     <div style={styles.page}>
       <Navbar />
-      <h1 style={styles.h1}>Урок {lesson.id}: {lesson.title}</h1>
-      <p style={styles.meta}>Уровень: {level}</p>
-      <p style={styles.progress}>Задание {step + 1} из {lesson.exercises.length}</p>
-      <p style={styles.scoreBadge}>✓ Верно: {correctCount}</p>
+      <h1 style={styles.h1}>{t.lvLessonWord} {lesson.id}: {lesson.title}</h1>
+      <p style={styles.meta}>{t.lvLevelLabel}: {level}</p>
+      <p style={styles.progress}>{t.lvTaskLabel} {step + 1} {t.lvOfLabel} {lesson.exercises.length}</p>
+      <p style={styles.scoreBadge}>✓ {t.lvCorrectLabel}: {correctCount}</p>
 
       <div style={styles.card}>
         <p style={styles.question}>{exercise.question}</p>
@@ -261,32 +261,32 @@ export default function LessonView() {
               value={textAnswer}
               onChange={(e) => setTextAnswer(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && feedback === null && checkText()}
-              placeholder="Введите ответ на английском..."
+              placeholder={t.lvAnswerPlaceholder}
               disabled={feedback !== null}
             />
             {feedback === null && (
-              <button style={styles.nextBtn} onClick={checkText}>Проверить</button>
+              <button style={styles.nextBtn} onClick={checkText}>{t.lvCheckBtn}</button>
             )}
           </>
         )}
 
         {feedback === "correct" && (
-          <p style={{ ...styles.feedback, ...styles.correct }}>✓ Верно!</p>
+          <p style={{ ...styles.feedback, ...styles.correct }}>{t.lvCorrectFeedback}</p>
         )}
         {feedback === "wrong" && (
           <p style={{ ...styles.feedback, ...styles.wrong }}>
-            ✗ Неверно. Правильный ответ: {exercise.answer}
+            {t.lvWrongFeedback} {exercise.answer}
           </p>
         )}
 
         {feedback !== null && (
           <button style={styles.nextBtn} onClick={next}>
-            {isLast ? "Завершить урок" : "Следующее задание →"}
+            {isLast ? t.lvFinishBtn : t.lvNextTaskBtn}
           </button>
         )}
       </div>
 
-      <Link to={`/lessons/${level}`} style={styles.back}>← Назад к урокам</Link>
+      <Link to={`/lessons/${level}`} style={styles.back}>{t.lvBackToLessons}</Link>
     </div>
   );
 }
